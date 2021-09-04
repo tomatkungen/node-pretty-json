@@ -13,9 +13,9 @@ export enum eToken {
 export interface iPrettyConfig {
     propertyBreak: number;
     indent: number;
-    currentIndex: number | null;
-    currentLength: number | null;
-    prevToken: eToken | null;
+    currentIndex: number;
+    currentLength: number;
+    prevToken: eToken;
 }
 
 export interface iPrettyArray extends Array<{}> {};
@@ -27,8 +27,8 @@ class cPrettyPrint {
         return (new cPrettyPrint()).state(value, {
             propertyBreak,
             indent,
-            currentIndex: null,
-            currentLength: null,
+            currentIndex: 0,
+            currentLength: 0,
             prevToken: eToken.NULL
         });
     }
