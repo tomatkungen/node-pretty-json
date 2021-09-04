@@ -34,8 +34,16 @@ class cPrettyPrint {
     }
 
     private state(value: iPrettyArray | number, config: iPrettyConfig): string {
-        const aryLines  = cPrettyUtil.isArray(value)    && this.prtArray(value as iPrettyArray, config);
-        const numLine   = cPrettyUtil.isNumber(value)   && this.prtValue(value, config);
+        
+        const aryLines  = (
+            cPrettyUtil.isArray(value) &&
+            this.prtArray(value as iPrettyArray, {...config, indent: config.indent + 1})
+        ) || '';
+        
+        const numLine   = (
+            cPrettyUtil.isNumber(value) &&
+            this.prtValue(value, config)
+        ) || '';
         
         return `${numLine}${aryLines}`;
     }
@@ -50,8 +58,7 @@ class cPrettyPrint {
                 {
                     ...config,
                     currentIndex: index,
-                    currentLength: ary.length,
-                    indent: (config.indent + 1)
+                    currentLength: ary.length
                 }
             );
             return `${aryState}`;
@@ -72,12 +79,13 @@ class cPrettyPrint {
     }
     
     private prtBeginBracket(config: iPrettyConfig) {
-        console.log('prtBeginBracket',config);
         return [
-            (config.indent > 1 && !cPrettyUtil.isCarriageReturn({
-                ...config,
-                currentIndex: config.currentIndex - 1
-            }) && eToken.CARRIGE_RETURN) || '',
+            (
+                config.indent > 1 && !cPrettyUtil.isCarriageReturn({
+                    ...config,
+                    currentIndex: config.currentIndex - 1
+                }) && eToken.CARRIGE_RETURN
+            ) || '',
             this.prtSpaces(config.indent - 1),
             eToken.START_SQUARE_BRACKET,
             eToken.CARRIGE_RETURN,

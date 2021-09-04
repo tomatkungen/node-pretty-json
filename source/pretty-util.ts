@@ -13,7 +13,12 @@ export class cPrettyUtil {
         if (config.currentIndex === 0)
             return true;
 
-        return config.prevToken === eToken.CARRIGE_RETURN;
+        return cPrettyUtil.isCarriageReturn(
+            {
+                ...config,
+                currentIndex: config.currentIndex -1
+            }
+        );
     }
 
     public static isCarriageReturn(config: iPrettyConfig): boolean {
