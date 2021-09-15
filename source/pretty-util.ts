@@ -18,7 +18,7 @@ export class cPrettyUtil {
                 ...config,
                 currentIndex: config.currentIndex -1
             }
-        );
+        ) || config.prevToken === eToken.CARRIGE_RETURN;
     }
 
     public static isCarriageReturn(config: iPrettyConfig): boolean {
