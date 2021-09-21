@@ -1,10 +1,10 @@
 import { cPrettyPrint } from "./pretty-print";
 
 //let example1 = [1,2,3,[4,5,6,[7,8,9]],[10,11,13,14,15]];
-let example1 = [1,2,3,[4,5,6],7];
+let example1 = ['1',2,3,[4,5,6,[1,2,3,4,undefined]],7,8,[null,10, true, false]];
 
 console.log(
-    cPrettyPrint.prettyPrint(example1, 3, 0)
+    cPrettyPrint.prettyPrint(example1, 4, 0)
 );
 
 

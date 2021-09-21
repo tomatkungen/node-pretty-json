@@ -20,6 +20,20 @@ export interface iPrettyConfig {
 
 export interface iPrettyArray extends Array<{}> {};
 
+interface iPrettyObject {
+    [index: string]: tokenType;
+}
+
+export type tokenType = 
+    | iPrettyArray
+    | iPrettyObject
+    | number
+    | boolean
+    | string
+    | symbol
+    | undefined
+    | null;
+
 class cPrettyPrint {
     constructor() {}
 
@@ -33,21 +47,65 @@ class cPrettyPrint {
         });
     }
 
-    private state(value: iPrettyArray | number, config: iPrettyConfig): string {
-        console.log('',config);
+    private state(value: tokenType, config: iPrettyConfig): string {
         // Array
-        const aryLines  = (
+        const aryLines = (
             cPrettyUtil.isArray(value) &&
-            this.prtArray(value as iPrettyArray, {...config, indent: config.indent + 1})
-        ) || '';0
+            this.prtArray(
+                value as iPrettyArray,
+                {...config, indent: config.indent + 1}
+            )
+        ) || '';
+
+        const isObject = (
+            cPrettyUtil.isObject(value) &&
+            this.prtObject(
+                value as iPrettyObject,
+                {...config, indent: config.indent + 1}
+            )
+        )
         
         // Number
-        const numLine   = (
+        const numLine = (
             cPrettyUtil.isNumber(value) &&
             this.prtToken(value, config)
         ) || '';
+
+        // boolean
+        const bolLine = ((
+            cPrettyUtil.isBoolean(value) &&
+            this.prtToken(`${value as boolean}`, config)
+        ) || '');
+
+        // String
+        const strLine = ((
+            cPrettyUtil.isString(value) &&
+            this.prtToken(`'${value as string}'`, config)
+        ) || '');
         
-        return `${numLine}${aryLines}`;
+        // null
+        const undefinedLine = ((
+            cPrettyUtil.isUndefined(value) &&
+            this.prtToken(`undefined`, config)
+        ) || '');
+
+        // undefined
+        const nullLine = ((
+            cPrettyUtil.isNull(value) &&
+            this.prtToken(`null`, config)
+        ) || '');
+
+        // symbol
+        const symbolLine = ((
+            cPrettyUtil.isSymbol(value) &&
+            this.prtToken(`symbol`, config)
+        ) || '');
+
+        return `${symbolLine}${nullLine}${undefinedLine}${strLine}${bolLine}${numLine}${aryLines}${isObject}`;
+    }
+
+    private prtObject(obj: iPrettyObject, config: iPrettyConfig): string {
+        return '';
     }
 
     private prtArray(ary: iPrettyArray, config: iPrettyConfig): string {
@@ -115,7 +173,11 @@ class cPrettyPrint {
             ) || '',
             this.prtSpaces(config.indent - 1, config),
             this.prtEndSquareBracket(config),
-            cPrettyUtil.isDelimiter(config) && this.prtDelimiter(config) || '',
+
+            (
+                cPrettyUtil.isDelimiter(config) ||
+                config.indent >= 2
+            ) && this.prtDelimiter(config) || '',
             this.prtCarriageReturn(config),
         ].join('');
     }
