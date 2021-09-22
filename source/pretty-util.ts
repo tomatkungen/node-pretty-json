@@ -36,7 +36,7 @@ export class cPrettyUtil {
         return typeof value === 'symbol';
     }
 
-    public static isSpace(config: iPrettyConfig): boolean {
+    public static isSpace(config: iPrettyConfig, prevToken: eToken): boolean {
         if (config.currentIndex === 0)
             return true;
 
@@ -45,13 +45,13 @@ export class cPrettyUtil {
                 ...config,
                 currentIndex: config.currentIndex -1
             }
-        ) || config.prevToken === eToken.CARRIGE_RETURN;
+        ) || prevToken === eToken.CARRIGE_RETURN;
     }
 
     public static isCarriageReturn(config: iPrettyConfig): boolean {
         if (config.propertyBreak === 0)
             return true;
-        
+
         return ((config.currentIndex +1) % config.propertyBreak) === 0;
     }
 
