@@ -16,7 +16,8 @@ export class cPrettyUtil {
     public static isObject<T>(value: T): boolean {
         return (
             typeof value === 'object' && 
-            !Array.isArray(value)
+            !Array.isArray(value) &&
+            value !== null
         );
     }
 

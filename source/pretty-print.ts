@@ -1,13 +1,15 @@
 import { cPrettyUtil } from "./pretty-util";
 
 export enum eToken {
-    START_SQUARE_BRACKET    = '[',
-    END_SQUARE_BRACKET      = ']',
-    DELIMITER               = ',',
-    CARRIGE_RETURN          = '\n',
-    SPACE                   = '--',
-    VALUE                   = 'value',
-    NULL                    = 'null'
+    START_CURLY_SQUARE_BRACKET  = '[',
+    END_CURLY_SQUARE_BRACKET    = ']',
+    START_SQUARE_BRACKET        = '[',
+    END_SQUARE_BRACKET          = ']',
+    DELIMITER                   = ',',
+    CARRIGE_RETURN              = '\n',
+    SPACE                       = '--',
+    VALUE                       = 'value',
+    NULL                        = 'null'
 }
 
 export interface iPrettyConfig {
@@ -59,13 +61,14 @@ class cPrettyPrint {
             )
         ) || '';
 
-        // const isObject = (
-        //     cPrettyUtil.isObject(value) &&
-        //     this.prtObject(
-        //         value as iPrettyObject,
-        //         {...config, indent: config.indent + 1}
-        //     )
-        // )
+        // Object
+        const objLines = (
+            cPrettyUtil.isObject(value) &&
+            this.prtObject(
+                value as iPrettyObject,
+                {...config, indent: config.indent + 1}
+            )
+        ) || '';
         
         // Number
         const numLine = (
@@ -103,17 +106,23 @@ class cPrettyPrint {
             this.prtToken(`symbol`, config)
         ) || '');
 
-        //return `${numLine}${aryLines}`;
-        return `${symbolLine}${nullLine}${undefinedLine}${strLine}${bolLine}${numLine}${aryLines}`;
+        return `${symbolLine}${nullLine}${undefinedLine}${strLine}${bolLine}${numLine}${aryLines}${objLines}`;
     }
 
     private prtObject(obj: iPrettyObject, config: iPrettyConfig): string {
-        return '';
+        console.log('iiiiii');
+        const strBeginBracketsLine = this.prtBeginBracket(config, eToken.START_CURLY_SQUARE_BRACKET);
+
+        const objLines = '';
+
+        const strEndBracketsLine = this.prtEndBracket(config, eToken.END_CURLY_SQUARE_BRACKET);
+        
+        return `${strBeginBracketsLine}${objLines}${strEndBracketsLine}`;
     }
 
     private prtArray(ary: iPrettyArray, config: iPrettyConfig): string {
 
-        const strBeginBracketsLine = this.prtBeginBracket(config);
+        const strBeginBracketsLine = this.prtBeginBracket(config, eToken.START_SQUARE_BRACKET);
 
         const aryLines = ary.map((currentValue, index, ary) => {
 
@@ -128,7 +137,7 @@ class cPrettyPrint {
             return `${aryState}`;
         }).join('');
 
-        const strEndBracketsLine = this.prtEndBracket(config);
+        const strEndBracketsLine = this.prtEndBracket(config, eToken.END_SQUARE_BRACKET);
         
         return `${strBeginBracketsLine}${aryLines}${strEndBracketsLine}`;
     }
@@ -147,7 +156,7 @@ class cPrettyPrint {
         ].join('');
     }
     
-    private prtBeginBracket(config: iPrettyConfig) {
+    private prtBeginBracket(config: iPrettyConfig, bracket: eToken) {
         return [
             (
                 this.prevToken !== eToken.CARRIGE_RETURN &&
@@ -155,12 +164,12 @@ class cPrettyPrint {
                 this.prtCarriageReturn()
             ) || '',
             this.prtSpaces(config.indent - 1, ),
-            this.prtStartSquareBracket(),
+            bracket,
             this.prtCarriageReturn(),
         ].join('');
     }
 
-    private prtEndBracket(config: iPrettyConfig) {
+    private prtEndBracket(config: iPrettyConfig, bracket: eToken) {
         return [
             (
                 this.prevToken !== eToken.NULL &&
@@ -168,8 +177,7 @@ class cPrettyPrint {
                 this.prtCarriageReturn()
             ) || '',
             this.prtSpaces(config.indent - 1),
-            this.prtEndSquareBracket(),
-
+            bracket,
             (
                 cPrettyUtil.isDelimiter(config) ||
                 config.indent >= 2
