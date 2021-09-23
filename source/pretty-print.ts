@@ -7,7 +7,7 @@ export enum eToken {
     END_SQUARE_BRACKET          = ']',
     DELIMITER                   = ',',
     CARRIGE_RETURN              = '\n',
-    SPACE                       = '--',
+    SPACE                       = '  ',
     VALUE                       = 'value',
     NULL                        = 'null'
 }
