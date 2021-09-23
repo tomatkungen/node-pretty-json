@@ -1,8 +1,8 @@
 import { cPrettyUtil } from "./pretty-util";
 
 export enum eToken {
-    START_CURLY_SQUARE_BRACKET  = '[',
-    END_CURLY_SQUARE_BRACKET    = ']',
+    START_CURLY_SQUARE_BRACKET  = '{',
+    END_CURLY_SQUARE_BRACKET    = '}',
     START_SQUARE_BRACKET        = '[',
     END_SQUARE_BRACKET          = ']',
     DELIMITER                   = ',',
@@ -26,8 +26,8 @@ interface iPrettyObject {
 }
 
 export type tokenType = 
-    | iPrettyArray
     | iPrettyObject
+    | iPrettyArray
     | number
     | boolean
     | string
@@ -42,7 +42,7 @@ class cPrettyPrint {
         this.prevToken = eToken.NULL;
     }
 
-    public static prettyPrint(value: iPrettyArray, propertyBreak: number, indent: number): string {
+    public static prettyPrint(value: tokenType, propertyBreak: number, indent: number): string {
         return (new cPrettyPrint()).state(value, {
             propertyBreak,
             indent,
@@ -110,10 +110,28 @@ class cPrettyPrint {
     }
 
     private prtObject(obj: iPrettyObject, config: iPrettyConfig): string {
-        console.log('iiiiii');
         const strBeginBracketsLine = this.prtBeginBracket(config, eToken.START_CURLY_SQUARE_BRACKET);
 
-        const objLines = '';
+        const objLines = Object.keys(obj).map((key: string, index) => {
+
+            config.currentIndex = index;
+            config.currentLength = Object.keys(obj).length;
+
+            if (
+                cPrettyUtil.isArray(obj[key]) ||
+                cPrettyUtil.isObject(obj[key]) ||
+                cPrettyUtil.isSymbol(obj[key])
+            ) {
+                const objState = this.state(
+                    obj[key],
+                    config,
+                );
+
+                return `${objState}`;
+            }
+
+            return this.prtToken(`${key}: ${String(obj[key])}`, config);
+        }).join('');
 
         const strEndBracketsLine = this.prtEndBracket(config, eToken.END_CURLY_SQUARE_BRACKET);
         
@@ -143,6 +161,7 @@ class cPrettyPrint {
     }
 
     private prtToken<T>(value: T, config: iPrettyConfig): string {
+
         return [
             cPrettyUtil.isSpace(config, this.prevToken) && this.prtSpaces(config.indent) || '',
             this.prtValue(value),
