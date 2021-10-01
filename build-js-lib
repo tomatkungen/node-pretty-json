@@ -1,0 +1,1 @@
+yarn esbuild source/pretty-print.ts --bundle --outfile=build-lib/pretty.js --global-name=Pretty

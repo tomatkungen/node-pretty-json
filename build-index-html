@@ -1,0 +1,1 @@
+yarn esbuild source/pretty-json.ts --bundle --outfile=build-web/pretty.js

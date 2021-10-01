@@ -1,1 +1,5 @@
 build
+build-js-minify
+build-lib
+build-web
+node_modules
