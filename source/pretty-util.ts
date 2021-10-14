@@ -1,4 +1,5 @@
-import { eToken, iPrettyConfig } from "./pretty-print";
+import { iPrettyConfig } from "./pretty-print";
+import { eToken } from "./pretty-token";
 
 export class cPrettyUtil {
     public static isArray<T>(value: T): boolean {
@@ -13,7 +14,7 @@ export class cPrettyUtil {
         return typeof value === 'boolean';
     }
 
-    public static isObject<T>(value: T): boolean {
+    public static isObject<T>(value: T): boolean {        
         return (
             typeof value === 'object' && 
             !Array.isArray(value) &&
@@ -37,7 +38,7 @@ export class cPrettyUtil {
         return typeof value === 'symbol';
     }
 
-    public static isSpace(config: iPrettyConfig, prevToken: eToken): boolean {
+    public static isIndent(config: iPrettyConfig, prevToken: eToken): boolean {
         if (config.currentIndex === 0)
             return true;
 
@@ -50,10 +51,10 @@ export class cPrettyUtil {
     }
 
     public static isCarriageReturn(config: iPrettyConfig): boolean {
-        if (config.propertyBreak === 0)
+        if (config.indexBreak === 0)
             return true;
 
-        return ((config.currentIndex +1) % config.propertyBreak) === 0;
+        return ((config.currentIndex + 1) % config.indexBreak) === 0;
     }
 
     public static isDelimiter(config: iPrettyConfig): boolean {

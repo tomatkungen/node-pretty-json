@@ -1,19 +1,8 @@
+import { cPrettyToken, eToken } from "./pretty-token";
 import { cPrettyUtil } from "./pretty-util";
 
-export enum eToken {
-    START_CURLY_SQUARE_BRACKET  = '{',
-    END_CURLY_SQUARE_BRACKET    = '}',
-    START_SQUARE_BRACKET        = '[',
-    END_SQUARE_BRACKET          = ']',
-    DELIMITER                   = ',',
-    CARRIGE_RETURN              = '\n',
-    SPACE                       = '  ',
-    VALUE                       = 'value',
-    NULL                        = 'null'
-}
-
 export interface iPrettyConfig {
-    propertyBreak: number;
+    indexBreak: number;
     indent: number;
     currentIndex: number;
     currentLength: number;
@@ -35,16 +24,14 @@ export type tokenType =
     | undefined
     | null;
 
-class cPrettyPrint {
-    private prevToken: eToken;
-    
+class cPrettyPrint extends cPrettyToken {    
     constructor() {
-        this.prevToken = eToken.NULL;
+        super();
     }
 
-    public static prettyPrint(value: tokenType, propertyBreak: number, indent: number): string {
+    public static prettyPrint(value: tokenType, indexBreak: number, indent: number): string {
         return (new cPrettyPrint()).state(value, {
-            propertyBreak,
+            indexBreak,
             indent,
             currentIndex: 0,
             currentLength: 0,
@@ -85,7 +72,7 @@ class cPrettyPrint {
         // // String
         const strLine = ((
             cPrettyUtil.isString(value) &&
-            this.prtToken(`'${value as string}'`, config)
+            this.prtToken(`"${value as string}"`, config)
         ) || '');
         
         // null
@@ -130,7 +117,7 @@ class cPrettyPrint {
                 return `${objState}`;
             }
 
-            return this.prtToken(`${key}: ${String(obj[key])}`, config);
+            return this.prtToken(`"${key}": ${String(obj[key])}`, config);
         }).join('');
 
         const strEndBracketsLine = this.prtEndBracket(config, eToken.END_CURLY_SQUARE_BRACKET);
@@ -148,7 +135,7 @@ class cPrettyPrint {
             config.currentLength = ary.length;
 
             const aryState = this.state(
-                currentValue as iPrettyArray,
+                currentValue,
                 config
             );
 
@@ -163,82 +150,46 @@ class cPrettyPrint {
     private prtToken<T>(value: T, config: iPrettyConfig): string {
 
         return [
-            cPrettyUtil.isSpace(config, this.prevToken) && this.prtSpaces(config.indent) || '',
-            this.prtValue(value),
-            cPrettyUtil.isDelimiter(config) && this.prtDelimiter() || '',
+            cPrettyUtil.isIndent(config, super.prevToken) && super.prtIndent(config.indent) || '',
+            super.prtValue(value),
+            cPrettyUtil.isDelimiter(config) && super.prtDelimiter() || '',
             (
                 (
                     cPrettyUtil.isCarriageReturn(config) ||
                     !cPrettyUtil.isDelimiter(config)
-                ) && this.prtCarriageReturn()
+                ) && super.prtCarriageReturn()
             ) || '',
-        ].join('');
+        ].join('');        
     }
     
     private prtBeginBracket(config: iPrettyConfig, bracket: eToken) {
         return [
             (
-                this.prevToken !== eToken.CARRIGE_RETURN &&
-                this.prevToken !== eToken.NULL &&
-                this.prtCarriageReturn()
+                super.prevToken !== eToken.CARRIGE_RETURN &&
+                super.prevToken !== eToken.NULL &&
+                super.prtCarriageReturn()
             ) || '',
-            this.prtSpaces(config.indent - 1, ),
+            this.prtIndent(config.indent - 1),
             bracket,
-            this.prtCarriageReturn(),
+            super.prtCarriageReturn(),
         ].join('');
     }
 
     private prtEndBracket(config: iPrettyConfig, bracket: eToken) {
         return [
             (
-                this.prevToken !== eToken.NULL &&
-                this.prevToken !== eToken.CARRIGE_RETURN &&
-                this.prtCarriageReturn()
+                super.prevToken !== eToken.NULL &&
+                super.prevToken !== eToken.CARRIGE_RETURN &&
+                super.prtCarriageReturn()
             ) || '',
-            this.prtSpaces(config.indent - 1),
+            this.prtIndent(config.indent - 1),
             bracket,
             (
                 cPrettyUtil.isDelimiter(config) ||
                 config.indent >= 2
-            ) && this.prtDelimiter() || '',
-            this.prtCarriageReturn(),
+            ) && super.prtDelimiter() || '',
+            super.prtCarriageReturn(),
         ].join('');
-    }
-
-    private prtValue<T>(value: T) {
-        this.prevToken = eToken.VALUE;
-        
-        return value;
-    }
-
-    private prtSpaces(numSpaces: number): string {
-        this.prevToken = eToken.SPACE;
-
-        return (new Array(2 * numSpaces + 1)).join(eToken.SPACE);
-    }
-
-    private prtDelimiter() {
-        this.prevToken = eToken.DELIMITER;
-
-        return eToken.DELIMITER;
-    }
-
-    private prtCarriageReturn() {
-        this.prevToken = eToken.CARRIGE_RETURN;
-
-        return eToken.CARRIGE_RETURN;
-    }
-
-    private prtStartSquareBracket() {
-        this.prevToken = eToken.START_SQUARE_BRACKET;
-
-        return eToken.START_SQUARE_BRACKET;
-    }
-
-    private prtEndSquareBracket() {
-        this.prevToken = eToken.END_SQUARE_BRACKET;
-
-        return eToken.END_SQUARE_BRACKET;
     }
 }
 
