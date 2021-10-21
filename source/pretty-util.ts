@@ -38,22 +38,55 @@ export class cPrettyUtil {
         return typeof value === 'symbol';
     }
 
-    public static isIndent(config: iPrettyConfig, prevToken: eToken): boolean {
-        if (config.currentIndex === 0)
-            return true;
-
-        return cPrettyUtil.isCarriageReturn(
-            {
-                ...config,
-                currentIndex: config.currentIndex -1
-            }
-        ) || prevToken === eToken.CARRIGE_RETURN;
+    public static isFunction<T>(value: T): boolean {
+        return typeof value === 'function';
     }
 
-    public static isCarriageReturn(config: iPrettyConfig): boolean {
-        if (config.indexBreak === 0)
-            return true;
+    public static isToken<T>(value: T): boolean {
+        return (
+            cPrettyUtil.isNumber(value)     ||
+            cPrettyUtil.isBoolean(value)    ||
+            cPrettyUtil.isString(value)     ||
+            cPrettyUtil.isUndefined(value)  ||
+            cPrettyUtil.isNull(value)       ||
+            cPrettyUtil.isSymbol(value)     ||
+            cPrettyUtil.isFunction(value)
+        );
+    }
 
+    public static isIndent(config: iPrettyConfig, prevToken: eToken): boolean {
+        return prevToken === eToken.CARRIGE_RETURN;
+        // if (config.currentIndex === 0)
+        //     return true;
+
+        // return cPrettyUtil.isCarriageReturn(
+        //     {
+        //         ...config,
+        //         currentIndex: config.currentIndex -1
+        //     }
+        // ) || prevToken === eToken.CARRIGE_RETURN;
+    }
+
+    public static isCarriageReturn(config: iPrettyConfig, prevToken: eToken): boolean {
+        console.log('index',config.currentIndex, config.currentLength);
+        // if (
+        //     config.currentIndex === 0 ||
+        //     config.currentIndex === config.currentLength
+        // ) {
+        //     return true;
+        // }
+
+        return ((config.currentIndex + 1) % config.indexBreak) === 0;
+    }
+
+    public static isStartBracketCarriageReturn(prevToken: eToken): boolean {
+        return (
+            prevToken !== eToken.CARRIGE_RETURN &&
+            prevToken !== eToken.NULL
+        );
+    }
+
+    public static isTokenCarrigeReturn(config: iPrettyConfig): boolean {
         return ((config.currentIndex + 1) % config.indexBreak) === 0;
     }
 

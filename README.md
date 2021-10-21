@@ -25,7 +25,7 @@ Terminal: ./run
 
 Example
 ```javascript
-let example1 = [{a:2,b:2},'1',2,3,[4,5,6,[1,2,3,4,undefined]],7,8,[null,10, true, false]];
+let example1 = [{a:2,b:2},'1',2,3,[4,5,6,[1,2,3,4,undefined]],7,8,[null,10, true, false], (a: string,b: string) => {return a+b}];
 
 console.log(
     cPrettyPrint.prettyPrint(example1, 2, 0)
@@ -35,24 +35,25 @@ Result:
 ```
 [
     {
-        a: 2,b: 2
+        "a": 2, "b": 2
     },
-    '1',
-    2,3,
+    "1",
+    2, 3,
     [
-        4,5,
+        4, 5,
         6,
         [
-            1,2,
-            3,4,
+            1, 2,
+            3, 4,
             undefined
-        ],
+        ]
     ],
     7,
     8,
     [
-        null,10,
-        true,false
+        null, 10,
+        true, false
     ],
+    (a1, a2) => {...}
 ]
 ```
