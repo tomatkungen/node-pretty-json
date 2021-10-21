@@ -106,7 +106,7 @@ class cPrettyPrint extends cPrettyToken {
                 return `${objState}`;
             }).join('') ||
             this.prtToken(
-                eToken.DEEP_BLOCK,
+                deep > 5 && eToken.DEEP_BLOCK || eToken.EMPTY,
                 {
                     ...config,
                     currentIndex: 0,
@@ -148,7 +148,7 @@ class cPrettyPrint extends cPrettyToken {
                 return `${aryState}`;
             }).join('') ||
             this.prtToken(
-                eToken.DEEP_BLOCK,
+                deep > 5 && eToken.DEEP_BLOCK || eToken.EMPTY,
                 {
                     ...config,
                     currentIndex: 0,
