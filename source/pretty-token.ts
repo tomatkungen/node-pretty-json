@@ -18,7 +18,8 @@ export enum eToken {
     FUNCTION                    = 'function',
     NUMBER                      = 'number',
     STRING                      = 'string',
-    KEY                         = 'key'
+    KEY                         = 'key',
+    DEEP_BLOCK                  = '...to nested'
 }
 
 class cPrettyToken {
@@ -80,7 +81,8 @@ class cPrettyToken {
                 eToken.START_CURLY_SQUARE_BRACKET,
                 eToken.END_CURLY_SQUARE_BRACKET,
                 eToken.START_SQUARE_BRACKET,
-                eToken.END_SQUARE_BRACKET
+                eToken.END_SQUARE_BRACKET,
+                eToken.DEEP_BLOCK
             ].includes(value as eToken) === true ?
             `${value}` :
             `"${value}"`

@@ -44,6 +44,7 @@ class cPrettyPrint extends cPrettyToken {
     }
 
     private state(value: tokenType, config: iPrettyConfig, deep: number): string {
+
         // Array
         const aryLines = (
             cPrettyUtil.isArray(value) &&
@@ -81,26 +82,39 @@ class cPrettyPrint extends cPrettyToken {
     }
 
     private prtObject(obj: iPrettyObject, config: iPrettyConfig, deep: number): string {
+
         const strBeginBracketsLine = this.prtBeginBracket(
             config,
             eToken.START_CURLY_SQUARE_BRACKET
         );
 
-        const objLines = Object.keys(obj).map((key: string, index, current) => {
+        const objLines = (
+            deep <= 5 &&
+            Object.keys(obj).map((key: string, index, current) => {
 
-            const objState = this.state(
-                obj[key],
+                const objState = this.state(
+                    obj[key],
+                    {
+                        ...config,
+                        currentIndex: index,
+                        currentLength: current.length,
+                        key,
+                    },
+                    deep
+                );
+
+                return `${objState}`;
+            }).join('') ||
+            this.prtToken(
+                eToken.DEEP_BLOCK,
                 {
                     ...config,
-                    currentIndex: index,
-                    currentLength: current.length,
-                    key,
-                },
-                deep
-            );
-
-            return `${objState}`;
-        }).join('');
+                    currentIndex: 0,
+                    currentLength: 1,
+                    key: undefined
+                }
+            )
+        );
 
         const strEndBracketsLine = this.prtEndBracket(
             config,
@@ -117,22 +131,33 @@ class cPrettyPrint extends cPrettyToken {
             eToken.START_SQUARE_BRACKET
         );
 
-        const aryLines = ary.map((currentValue, index, current) => {
-            const aryState = this.state(
-                currentValue,
+        const aryLines = (
+            deep <= 5 &&
+            ary.map((currentValue, index, current) => {
+                const aryState = this.state(
+                    currentValue,
+                    {
+                        ...config,
+                        currentIndex: index,
+                        currentLength: current.length,
+                        key: undefined,
+                    },
+                    deep
+                );
+
+                return `${aryState}`;
+            }).join('') ||
+            this.prtToken(
+                eToken.DEEP_BLOCK,
                 {
                     ...config,
-                    currentIndex: index,
-                    currentLength: current.length,
-                    key: undefined,
-                },
-                deep
-            );
+                    currentIndex: 0,
+                    currentLength: 1,
+                    key: undefined
+                }
+            )
+        );
 
-            return `${aryState}`;
-        }).join('');
-
-        
         const strEndBracketsLine = this.prtEndBracket(
             config,
             eToken.END_SQUARE_BRACKET

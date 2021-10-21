@@ -12,8 +12,10 @@ import { cPrettyPrint } from "./pretty-print";
 // let example1 = ['1',2,3,[4,5,6,[1,2,3,4,undefined]],7,8,[null,10, true, false]];
 // let example1 = {a:1 , b:2, c:3, d: 2,e:[1,2,3], f: 2, h: { a: 1}}
 // let example1 = {a:2,b:2,c:{a:1,b: [1,2,true], d: true, e: undefined}};
-let example1 = [{a:2,b:2},'1',2,3,[4,5,6,[1,2,3,4,undefined]],7,8,[null,10, true, false], (a: string,b: string) => {return a+b}];
+//let example1 = [{a:2,b:2},'1',2,3,[4,5,6,[1,2,3,4,undefined]],7,8,[null,10, true, false], (a: string,b: string) => {return a+b}];
 // let example1 = { 'hejsan': 'hejsan', 'hejsans': 'hejsan'}
+//  let example1 = [1, [2, [3, [4,[5,[6]]]]]];
+let example1 = {a:1,b:{c:2,d:{e:3,f:{g:4,h:{i:5,j:{k:6,l:{}}}}}}}
 console.log(
     cPrettyPrint.prettyPrint(example1, 2, 0)
 );
