@@ -57,3 +57,21 @@ Result:
     (a1, a2) => {...}
 ]
 ```
+
+Example truncate
+```javascript
+let example1 = {a:[ 1,  2],b: [3,4],c: [5, 6]};
+
+console.log(
+    cPrettyPrint.prettyPrint(example1, 2, 0, true)
+);
+```
+
+Result:
+```
+{
+    "a": [ 1, 2 ],
+    "b": [ 3, 4 ],
+    "c": [ 5, 6 ]
+}
+```
