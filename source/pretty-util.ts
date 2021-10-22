@@ -58,6 +58,10 @@ export class cPrettyUtil {
         return prevToken === eToken.CARRIGE_RETURN;
     }
 
+    public static isPrevIndent(prevToken: eToken): boolean {
+        return prevToken === eToken.INDENT;
+    }
+
     public static isNotPrevCarriageReturn(prevToken: eToken): boolean {
         return (
             prevToken !== eToken.CARRIGE_RETURN &&

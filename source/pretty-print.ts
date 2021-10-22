@@ -239,9 +239,10 @@ class cPrettyPrint extends cPrettyToken {
                 ) || '',
                 (
                     cPrettyUtil.isNotPrevCarriageReturn(this.prevToken) &&
+                    !cPrettyUtil.isPrevIndent(this.prevToken) &&
                     super.prtSpace()
                 ) || '',
-                `${super.prtKey(config.key)}${super.prtValue(bracket)}`,
+                super.prtValue(bracket),
                 cPrettyUtil.isDelimiter(config) && super.prtDelimiter() || '',
                 super.prtCarriageReturn(),
             ].join('');

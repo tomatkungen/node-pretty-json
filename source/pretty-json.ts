@@ -12,12 +12,18 @@ import { cPrettyPrint } from "./pretty-print";
 // let example1 = [1,2,3,[4,5,6,[7,8,9]],[10,11,13,14,15],[1,2,3]];
 // let example1 = [1,2,3,[4,5,6,[1,2,3,4,5]],7,8,[11,10, 12, 13]];
 // let example1 = ['1',2,3,[4,5,6,[1,2,3,4,undefined]],7,8,[null,10, true, false]];
+// let example1 = { a: 1, b: 2, c:3 };
+// let example1 = {e:[1,2,3]};
 // let example1 = {a:1 , b:2, c:3, d: 2,e:[1,2,3], f: 2, h: { a: 1, b:2 ,c:3}}
 // let example1 = {a:2,b:2,c:{a:1,b: [1,2,true], d: true, e: undefined}};
 // let example1 = [{a:2,b:2},'1',2,3,[4,5,6,[1,2,3,4,undefined]],7,8,[null,10, true, false], (a: string,b: string) => {return a+b}];
 // let example1 = { 'hejsan': 'hejsan', 'hejsans': 'hejsan'}
 //  let example1 = [1, [2, [3, [4,[5,[6]]]]]];
-let example1 = {a:1,b:{c:2,d:{e:3,f:{g:4,h:{i:5,j:{k:6,l:{}}}}}}}
+// let example1 = {a:1,b:{c:2,d:{e:3,f:{g:4,h:{i:5,j:{k:6,l:{}}}}}}}
+// let example1 = [[1,2,3,4],[5,6,7],[8,9]];
+// let example1 = [{ a:1, b: 2}, { c:3, d:4}, { e:5, f: 6}];
+// let example1 = {a:{ a:1, b: 2},b: { c:3, d:4},c: { e:5, f: 6}};
+let example1 = {a:[ 1,  2],b: [3,4],c: [5, 6]};
 console.log(
     cPrettyPrint.prettyPrint(example1, 2, 0, false)
 );
