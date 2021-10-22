@@ -1,8 +1,9 @@
 import { cPrettyPrint } from "./pretty-print";
 
+// let example1 = [];
 // let example1 = {};
-//  let example1 = [1,2];
-//  let example1 = [1,2,3,4,5];
+// let example1 = [1,2];
+// let example1 = [1,2,3,4,5];
 // let example1 = [1,[1]];
 // let example1 = [1,2,[10]];
 // let example1 = [1,2, () => {return 1}, function apa() {return 2}, (a: number, b: number) => (a+b), function test(a: number,b: string,c: boolean) {}]
@@ -18,7 +19,7 @@ import { cPrettyPrint } from "./pretty-print";
 //  let example1 = [1, [2, [3, [4,[5,[6]]]]]];
 let example1 = {a:1,b:{c:2,d:{e:3,f:{g:4,h:{i:5,j:{k:6,l:{}}}}}}}
 console.log(
-    cPrettyPrint.prettyPrint(example1, 2, 0)
+    cPrettyPrint.prettyPrint(example1, 2, 0, false)
 );
 
 /*

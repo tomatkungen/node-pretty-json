@@ -54,39 +54,18 @@ export class cPrettyUtil {
         );
     }
 
-    public static isIndent(config: iPrettyConfig, prevToken: eToken): boolean {
+    public static isPrevCarriageReturn(prevToken: eToken): boolean {
         return prevToken === eToken.CARRIGE_RETURN;
-        // if (config.currentIndex === 0)
-        //     return true;
-
-        // return cPrettyUtil.isCarriageReturn(
-        //     {
-        //         ...config,
-        //         currentIndex: config.currentIndex -1
-        //     }
-        // ) || prevToken === eToken.CARRIGE_RETURN;
     }
 
-    public static isCarriageReturn(config: iPrettyConfig, prevToken: eToken): boolean {
-        console.log('index',config.currentIndex, config.currentLength);
-        // if (
-        //     config.currentIndex === 0 ||
-        //     config.currentIndex === config.currentLength
-        // ) {
-        //     return true;
-        // }
-
-        return ((config.currentIndex + 1) % config.indexBreak) === 0;
-    }
-
-    public static isStartBracketCarriageReturn(prevToken: eToken): boolean {
+    public static isNotPrevCarriageReturn(prevToken: eToken): boolean {
         return (
             prevToken !== eToken.CARRIGE_RETURN &&
             prevToken !== eToken.NULL
         );
     }
 
-    public static isTokenCarrigeReturn(config: iPrettyConfig): boolean {
+    public static isIndexBreak(config: iPrettyConfig): boolean {
         return ((config.currentIndex + 1) % config.indexBreak) === 0;
     }
 

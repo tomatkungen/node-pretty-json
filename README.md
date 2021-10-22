@@ -20,7 +20,7 @@
 
 Run
 ```
-Terminal: ./run
+Terminal: ./run-nodejs
 ```
 
 Example

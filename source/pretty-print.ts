@@ -26,12 +26,23 @@ export type tokenType =
     | null;
 
 class cPrettyPrint extends cPrettyToken {    
-    constructor() {
+    private _deepBlock: number;
+    private _trunk: boolean;
+
+    constructor(trunk?: boolean) {
         super();
+
+        this._deepBlock = 5;
+        this._trunk = !!trunk;
     }
 
-    public static prettyPrint(value: tokenType, indexBreak: number, indent: number): string {
-        return (new cPrettyPrint()).state(
+    public static prettyPrint(
+        value: tokenType,
+        indexBreak: number,
+        indent: number,
+        trunk?: boolean
+    ): string {
+        return (new cPrettyPrint(trunk)).state(
             value,
             {
                 indexBreak,
@@ -89,7 +100,7 @@ class cPrettyPrint extends cPrettyToken {
         );
 
         const objLines = (
-            deep <= 5 &&
+            deep <= this._deepBlock &&
             Object.keys(obj).map((key: string, index, current) => {
 
                 const objState = this.state(
@@ -106,7 +117,7 @@ class cPrettyPrint extends cPrettyToken {
                 return `${objState}`;
             }).join('') ||
             this.prtToken(
-                deep > 5 && eToken.DEEP_BLOCK || eToken.EMPTY,
+                deep > this._deepBlock && eToken.DEEP_BLOCK || eToken.EMPTY,
                 {
                     ...config,
                     currentIndex: 0,
@@ -132,7 +143,7 @@ class cPrettyPrint extends cPrettyToken {
         );
 
         const aryLines = (
-            deep <= 5 &&
+            deep <= this._deepBlock &&
             ary.map((currentValue, index, current) => {
                 const aryState = this.state(
                     currentValue,
@@ -148,7 +159,7 @@ class cPrettyPrint extends cPrettyToken {
                 return `${aryState}`;
             }).join('') ||
             this.prtToken(
-                deep > 5 && eToken.DEEP_BLOCK || eToken.EMPTY,
+                deep > this._deepBlock && eToken.DEEP_BLOCK || eToken.EMPTY,
                 {
                     ...config,
                     currentIndex: 0,
@@ -168,24 +179,46 @@ class cPrettyPrint extends cPrettyToken {
 
     private prtToken(value: tokenType, config: iPrettyConfig): string {
 
+        if (this._trunk) {
+            return [
+                cPrettyUtil.isPrevCarriageReturn(super.prevToken) && super.prtIndent(config.indent) || '',
+                `${super.prtKey(config.key)}${super.prtValue(value)}`,
+                cPrettyUtil.isDelimiter(config) && super.prtDelimiter() || '',
+                cPrettyUtil.isDelimiter(config) && super.prtSpace() || '',
+            ].join('');
+        }
+
         return [
             super._debug && 't-' || '',
-            cPrettyUtil.isIndent(config, super.prevToken) && super.prtIndent(config.indent) || '',
+            cPrettyUtil.isPrevCarriageReturn(super.prevToken) && super.prtIndent(config.indent) || '',
             `${super.prtKey(config.key)}${super.prtValue(value)}`,
             cPrettyUtil.isDelimiter(config) && super.prtDelimiter() || '',
-            !cPrettyUtil.isTokenCarrigeReturn(config) &&
+            !cPrettyUtil.isIndexBreak(config) &&
             cPrettyUtil.isDelimiter(config) && super.prtSpace() || '',
-            cPrettyUtil.isTokenCarrigeReturn(config) && super.prtCarriageReturn() || '',
+            cPrettyUtil.isIndexBreak(config) && super.prtCarriageReturn() || '',
             super._debug && '-t' || '',
         ].join('');
+
     }
     
-    private prtBeginBracket(config: iPrettyConfig, bracket: eToken) {
+    private prtBeginBracket(config: iPrettyConfig, bracket: eToken): string {
+
+        if (this._trunk) {
+            return [
+                (
+                    cPrettyUtil.isNotPrevCarriageReturn(super.prevToken)
+                    && super.prtCarriageReturn()
+                ) || '',
+                super.prtIndent(config.indent - 1),
+                `${super.prtKey(config.key)}${super.prtValue(bracket)}`,
+                super.prtSpace()
+            ].join('');
+        }
 
         return [
             super._debug && 'b-' || '',
             (
-                cPrettyUtil.isStartBracketCarriageReturn(this.prevToken)
+                cPrettyUtil.isNotPrevCarriageReturn(this.prevToken)
                 && super.prtCarriageReturn()
             ) ||'',
             super.prtIndent(config.indent - 1),
@@ -193,22 +226,40 @@ class cPrettyPrint extends cPrettyToken {
             super.prtCarriageReturn(),
             super._debug && '-b' || '',
         ].join('');
+
     }
 
     private prtEndBracket(config: iPrettyConfig, bracket: eToken) {
 
+        if (this._trunk) {
+            return [
+                (
+                    cPrettyUtil.isPrevCarriageReturn(this.prevToken) &&
+                    super.prtIndent(config.indent - 1)
+                ) || '',
+                (
+                    cPrettyUtil.isNotPrevCarriageReturn(this.prevToken) &&
+                    super.prtSpace()
+                ) || '',
+                `${super.prtKey(config.key)}${super.prtValue(bracket)}`,
+                cPrettyUtil.isDelimiter(config) && super.prtDelimiter() || '',
+                super.prtCarriageReturn(),
+            ].join('');
+        }
+
         return [
             super._debug && 'e-' || '',
             (
-                cPrettyUtil.isStartBracketCarriageReturn(this.prevToken)
+                cPrettyUtil.isNotPrevCarriageReturn(this.prevToken)
                 && super.prtCarriageReturn()
-            ) ||'',
+            ) || '',
             super.prtIndent(config.indent - 1),
             super.prtValue(bracket),
             cPrettyUtil.isDelimiter(config) && super.prtDelimiter() || '',
             super.prtCarriageReturn(),
             super._debug && '-e' || '',
         ].join('');
+
     }
 }
 
